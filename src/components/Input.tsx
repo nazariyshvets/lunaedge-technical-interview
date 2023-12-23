@@ -22,13 +22,14 @@ const Input = ({
 
   return (
     <div
-      className={`flex h-10 w-[400px] cursor-text items-center gap-2 rounded-lg border border-gray-400 bg-white px-[18px] py-3 outline outline-2 outline-transparent transition-all hover:outline-purple-700 ${
-        isFocused ? "outline-purple-700" : ""
+      role="input"
+      className={`flex h-10 w-[400px] cursor-text items-center gap-2 rounded-lg border border-gray-400 bg-white px-[18px] py-3 hover:outline hover:outline-purple-700 ${
+        isFocused ? "outline outline-purple-700" : ""
       } ${
         disabled
-          ? "pointer-events-none cursor-default bg-blue-100 text-blue-200 outline-blue-200 hover:outline-blue-200"
+          ? "pointer-events-none cursor-default bg-blue-100 text-blue-200 outline outline-blue-200 hover:outline-blue-200"
           : error
-            ? "outline-red-400 hover:outline-red-400"
+            ? "outline outline-red-400 hover:outline-red-400"
             : ""
       }`}
       onClick={() => !disabled && inputRef.current?.focus()}
