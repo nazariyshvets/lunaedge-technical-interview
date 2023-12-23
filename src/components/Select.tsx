@@ -10,6 +10,7 @@ import SelectOption from "../types/SelectOption";
 interface SelectProps {
   options: SelectOption[];
   onChange: (value: SelectOption | SelectOption[]) => void;
+  defaultValue?: SelectOption | SelectOption[] | null;
   placeholder?: string;
   isMulti?: boolean;
   isSearchable?: boolean;
@@ -18,10 +19,10 @@ interface SelectProps {
   disabled?: boolean;
 }
 
-// CustomSelect component
 const Select = ({
   options,
   onChange,
+  defaultValue = null,
   placeholder = "Select",
   isMulti = false,
   isSearchable = false,
@@ -32,7 +33,13 @@ const Select = ({
   const [showMenu, setShowMenu] = useState(false);
   const [selectedValue, setSelectedValue] = useState<
     SelectOption | SelectOption[] | null
-  >(isMulti ? [] : null);
+  >(
+    isMulti
+      ? defaultValue
+        ? [...(defaultValue as SelectOption[])]
+        : []
+      : defaultValue,
+  );
   const [searchValue, setSearchValue] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
   const inputRef = useRef<HTMLDivElement>(null);
@@ -157,15 +164,14 @@ const Select = ({
   return (
     <div className="relative h-fit w-[400px] rounded bg-white">
       <div
+        role="control-panel"
         ref={inputRef}
         onClick={() => !disabled && handleInputClick()}
-        className={`flex h-8 cursor-pointer items-center justify-between gap-1 overflow-hidden rounded border-2 border-gray-300 px-3 py-2 hover:border-purple-700 ${
-          showMenu ? "border-purple-700" : ""
-        } ${error ? "border-red-400 hover:border-red-400" : ""} ${
-          disabled
-            ? "cursor-default border-blue-200 bg-blue-100 hover:border-blue-200"
-            : ""
-        }`}
+        className={`flex h-8 items-center justify-between gap-1 overflow-hidden rounded border-2 border-gray-300 px-3 py-2 ${
+          !disabled ? "cursor-pointer hover:border-purple-700" : ""
+        } ${showMenu ? "border-purple-700" : ""} ${
+          error ? "border-red-400 hover:border-red-400" : ""
+        } ${disabled ? "cursor-default border-blue-200 bg-blue-100" : ""}`}
       >
         <div
           className={`max-w-full truncate ${
