@@ -3,7 +3,7 @@ import { Path, UseFormRegister } from "react-hook-form";
 import { EyeIcon } from "@heroicons/react/20/solid";
 import type FormValues from "../types/FormValues";
 
-interface InputProps
+export interface InputProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "pattern"> {
   name: Path<FormValues>;
   register: UseFormRegister<FormValues>;

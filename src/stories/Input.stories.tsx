@@ -1,24 +1,30 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { within, userEvent } from "@storybook/testing-library";
-import { EnvelopeIcon } from "@heroicons/react/20/solid";
+import { useForm } from "react-hook-form";
+import { UserIcon } from "@heroicons/react/20/solid";
 import Input from "../components/Input";
 import Label from "../components/Label";
 import AssistiveText from "../components/AssistiveText";
+import type FormValues from "../types/FormValues";
+import type { InputProps } from "../components/Input";
+
+const InputStory = (props: Omit<InputProps, "name" | "register" | "icon">) => {
+  const { register } = useForm<FormValues>();
+  return (
+    <Input name="name" register={register} icon={<UserIcon />} {...props} />
+  );
+};
 
 /**
  * Custom Input component
  */
 const meta = {
   title: "Components/Input",
-  component: Input,
+  component: InputStory,
   parameters: {
     layout: "centered",
   },
   tags: ["autodocs"],
-  args: {
-    icon: <EnvelopeIcon />,
-    onChange: () => {},
-  },
   decorators: [
     (Story) => (
       <div className="flex flex-col gap-2">
@@ -28,7 +34,7 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof Input>;
+} satisfies Meta<typeof InputStory>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
