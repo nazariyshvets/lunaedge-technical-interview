@@ -1,24 +1,51 @@
-import { EyeIcon } from "@heroicons/react/20/solid";
 import { useState, useRef, InputHTMLAttributes, ReactNode } from "react";
+import { Path, UseFormRegister } from "react-hook-form";
+import { EyeIcon } from "@heroicons/react/20/solid";
+import type FormValues from "../types/FormValues";
 
 interface InputProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange"> {
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, "pattern"> {
+  name: Path<FormValues>;
+  register: UseFormRegister<FormValues>;
   icon: ReactNode;
+  pattern?: RegExp;
   error?: boolean;
-  onChange: (value: string) => void;
 }
 
 const Input = ({
+  name,
+  register,
   icon,
-  value,
   placeholder = "Placeholder",
+  minLength = 0,
+  maxLength = Infinity,
+  pattern = /(?:)/,
+  required = false,
+  disabled = false,
   error,
-  disabled,
-  onChange,
   ...rest
 }: InputProps) => {
   const [isFocused, setIsFocused] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const { ref, ...registerRest } = register(name, {
+    minLength: {
+      value: minLength,
+      message: `This field must contain at least ${minLength} characters`,
+    },
+    maxLength: {
+      value: maxLength,
+      message: `This field must contain up to ${maxLength} characters`,
+    },
+    pattern: {
+      value: pattern,
+      message: "Invalid input",
+    },
+    required: {
+      value: required,
+      message: "This field is required",
+    },
+    disabled,
+  });
 
   return (
     <div
@@ -42,14 +69,15 @@ const Input = ({
         {icon}
       </div>
       <input
-        ref={inputRef}
-        value={value}
+        {...registerRest}
+        ref={(el) => {
+          ref(el);
+          inputRef.current = el;
+        }}
         placeholder={placeholder}
-        disabled={disabled}
         className={`w-full text-ellipsis bg-transparent outline-none focus:placeholder:text-black ${
           disabled ? "placeholder:text-blue-200" : "placeholder:text-gray-400"
         }`}
-        onChange={(event) => onChange(event.target.value)}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         {...rest}

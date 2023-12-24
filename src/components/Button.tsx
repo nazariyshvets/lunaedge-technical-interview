@@ -20,12 +20,14 @@ const Button = ({
   children,
   disabled,
   onClick,
+  ...rest
 }: ButtonProps) => {
   return (
     <button
       disabled={disabled}
       className={`flex items-center gap-1 rounded bg-blue-800 text-white transition hover:bg-blue-700 focus:bg-blue-700 focus:outline-2 focus:outline-blue-950 active:bg-blue-700 disabled:bg-blue-100 disabled:text-blue-300 ${STYLES[size]}`}
       onClick={onClick}
+      {...rest}
     >
       <StarIcon className="h-4" />
       {children}
