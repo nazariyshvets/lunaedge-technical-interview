@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { UserIcon } from "@heroicons/react/20/solid";
 import Input from "./Input";
@@ -10,15 +10,17 @@ import type SelectOption from "../types/SelectOption";
 
 interface FormProps {
   selectOptions: SelectOption[];
+  disabled?: boolean;
   onSuccess: (data: FormValues) => void;
 }
 
-const Form = ({ selectOptions, onSuccess }: FormProps) => {
+const Form = ({ selectOptions, disabled = false, onSuccess }: FormProps) => {
   const {
     register,
     formState: { errors },
     handleSubmit,
     setError,
+    clearErrors,
   } = useForm<FormValues>();
   const [pokemon, setPokemon] = useState<SelectOption[]>([]);
 
@@ -28,11 +30,14 @@ const Form = ({ selectOptions, onSuccess }: FormProps) => {
         type: "manual",
         message: "Please select exactly 4 pokémon",
       });
-      return;
+    } else {
+      onSuccess({ ...data, pokemon });
     }
-
-    onSuccess(data);
   };
+
+  useEffect(() => {
+    if (pokemon.length === 4) clearErrors("pokemon");
+  }, [pokemon]);
 
   return (
     <form
@@ -50,6 +55,7 @@ const Form = ({ selectOptions, onSuccess }: FormProps) => {
           maxLength={12}
           pattern={/^[a-zA-Z]+$/}
           required
+          disabled={disabled}
           error={!!errors.name}
         />
         {errors.name && (
@@ -66,6 +72,7 @@ const Form = ({ selectOptions, onSuccess }: FormProps) => {
           maxLength={12}
           pattern={/^[a-zA-Z]+$/}
           required
+          disabled={disabled}
           error={!!errors.surname}
         />
         {errors.surname && (
@@ -75,6 +82,7 @@ const Form = ({ selectOptions, onSuccess }: FormProps) => {
       <div className="flex flex-col gap-2">
         <Select
           options={selectOptions}
+          disabled={disabled}
           onChange={(value) => setPokemon(value as SelectOption[])}
           isMulti
           isSearchable
@@ -83,7 +91,9 @@ const Form = ({ selectOptions, onSuccess }: FormProps) => {
           <AssistiveText error>{errors.pokemon.message}</AssistiveText>
         )}
       </div>
-      <Button type="submit">Submit</Button>
+      <Button type="submit" disabled={disabled}>
+        Submit
+      </Button>
     </form>
   );
 };
